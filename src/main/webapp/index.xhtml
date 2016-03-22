@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                                          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:b="http://bootsfaces.net/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>User App</title>
+</h:head>
+<h:outputStylesheet library="css" name="mystyle.css"  />
+<h:body>
+<b:container>
+	<b:panel id="panelUsers" title="Painel Usuários" collapsible="false">
+	<h:panelGrid columns="2" columnClasses="rowPanelGrid1, rowPanelGrid2" style="width:100%;">
+	<h:form id="newUserForm">
+		<b:panel title="Formulário Usuário" collapsible="false">
+			<!-- ID -->
+			<b:row>
+			<b:column medium-screen="4">
+				<b:inputText value="#{userController.user.id}" id="idField" label="ID"
+					renderLabel="true" required="true" requiredMessage="Campo obrigatório" />
+			</b:column>
+			</b:row>
+			
+			<!-- NOME -->
+			<b:row>
+			<b:column medium-screen="4">
+			 <b:inputText value="#{userController.user.name}" id="nameField" label="Nome" maxlength="25"
+			 	renderLabel="true" required="true" requiredMessage="Campo obrigatório" />
+			</b:column>
+			</b:row>
+			
+			
+			<!-- DATA NASCIMENTO -->
+			<b:row>
+			<b:column medium-screen="4">
+		   		<b><h:outputText value="Data Nascimento" for="dateOfBirdField" /> </b>
+			</b:column>
+			
+			<b:column medium-screen="4">
+		    
+		    <p:calendar id="dateOfBirdField" 
+					value="#{userController.user.dateOfBirth}" pattern="dd-MM-yyyy"
+					mask="true" />
+			
+			</b:column>
+			</b:row>
+			
+			<b:row>
+
+			<!-- SEXO -->
+			<b:column medium-screen="4">
+			 <b:selectOneMenu value="#{userController.user.gender}"
+					id="genderField" label="Sexo" renderLabel="true">
+					<f:selectItem itemLabel="Masculino" itemValue="M" />
+					<f:selectItem itemLabel="Feminino" itemValue="F" />
+				</b:selectOneMenu>
+			</b:column>
+			</b:row>
+	
+			<!-- BUTTONS -->
+			<b:row>
+			<b:column medium-screen="4" span="2" offset="8">
+		    	<b:commandButton value="Cadastrar" look="primary" action="#" />
+			</b:column>
+			</b:row>
+			
+		 </b:panel>
+		 
+	</h:form>
+	
+		<p:dataTable id="userDatatable" var="user" value="#{userController.listUsers}" selectionMode="single"
+			 selection="#{userController.userSelected}" rowKey="#{user.id}" reflow="true"
+			 rowStyleClass="#{user.gender eq 'M' ? 'male' : 'female'}"
+			 rows="10" paginator="true">
+			
+			<p:ajax event="rowSelect" listener="#{userController.onRowSelect}" />
+		   	
+		   	<f:facet name="header">
+		   		Usuários
+		   	</f:facet>
+		   	
+		    <p:column headerText="Id" priority="4">
+		        <h:outputText value="#{user.id}" />
+		    </p:column>
+		 
+		    <p:column headerText="Name" priority="1">
+		        <h:outputText value="#{user.name}" />
+		    </p:column>
+		 
+		    <p:column headerText="Date of Birth" priority="2">
+		        <h:outputText value="#{user.dateOfBirth}">
+		        	<f:convertDateTime pattern="dd-MM-yyyy" />
+		        </h:outputText>
+		    </p:column>
+		 
+		    <p:column headerText="Gender" priority="3">
+		        <h:outputText value="#{user.gender}" />
+		    </p:column>
+		</p:dataTable>
+	</h:panelGrid>
+
+	</b:panel>
+</b:container>
+</h:body>
+</html>

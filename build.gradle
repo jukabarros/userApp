@@ -1,0 +1,106 @@
+apply plugin: 'java' 
+apply plugin: 'war' 
+apply plugin: 'eclipse-wtp'
+
+// Versão Java JDK
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// Definicao das versoes das libs
+def jsfApi = '2.2.5'
+def primefaces = '5.3'
+
+// Identificação do war
+war {
+    baseName = 'userApp'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+// Declaração de onde as dependências serão baixadas
+repositories {
+    mavenCentral()
+    maven {
+		url "http://repo.spring.io/libs-snapshot"
+		url "http://repository.primefaces.org"
+	}
+}
+
+// Declaração para resolução do buildscript
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Seção de declaração das dependências do código
+dependencies {
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+   
+	// JSON
+	compile 'org.json:json:20151123'
+	
+	// JSF + Primefaces
+	providedCompile 'javax.servlet:servlet-api:2.5'
+	compile "com.sun.faces:jsf-api:$jsfApi"
+	compile "com.sun.faces:jsf-impl:$jsfApi"
+	compile "org.primefaces:primefaces:$primefaces"
+	compile "org.primefaces.themes:bootstrap:1.0.10"
+	compile 'org.apache.commons:commons-lang3:3.2.1'
+	compile 'javax.inject:javax.inject:1'
+	
+	// Bootsface
+	compile 'net.bootsfaces:bootsfaces:0.8.0'
+	
+	// JSTL
+	compile 'javax.servlet:jstl:1.2'
+    
+}
+
+// Configurações do eclipse
+eclipse{
+	project {
+  	 natures 'org.springsource.ide.eclipse.gradle.core.nature', 'org.eclipse.jdt.groovy.core.groovyNature', 'org.eclipse.wst.common.project.facet.core.nature'
+  	}
+  	classpath {
+         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+	     downloadSources = true
+	     containers 'org.springsource.ide.eclipse.gradle.classpathcontainer'
+    }
+    
+    wtp {
+		facet {
+            facet name: "java", version: "1.8"          // Java version
+            facet name: "jst.web", version: "3.0"       // Dynamic Web Application
+            facet name: "jst.jsf", version: "2.2"       // Java Server Faces
+            facet name: "wst.jsdt.web", version: "1.0"  // JavaScript
+        }
+    }
+	
+	jdt {
+		sourceCompatibility = 1.8
+		targetCompatibility = 1.8
+	}
+}
+
+// Adiciona informações pertinentes a configuração do eclipse
+eclipseJdt << {
+    File f = file('.settings/org.eclipse.core.resources.prefs')
+    f.write('eclipse.preferences.version=1\n')
+    f.append('encoding/<project>=utf-8')
+}
+
+
+
+// Gradle wrapper
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.9'
+}

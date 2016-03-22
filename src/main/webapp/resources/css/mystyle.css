@@ -1,0 +1,14 @@
+.male{
+	background-color:#abcfff;
+}
+
+.female{
+	background-color:#deafff;  
+}
+
+.rowPanelGrid1{
+	width: 40%;
+}
+.rowPanelGrid2{
+	width: 60%;
+}
