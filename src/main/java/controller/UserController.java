@@ -4,10 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.primefaces.event.SelectEvent;
 
@@ -28,31 +26,55 @@ public class UserController implements Serializable{
 	
 	private UserEndpoint endPointUser;
 	
+	private boolean desabilitarBotoes;
+	
 	public UserController() {
 		super();
 		this.user = new User();
 		this.userSelected = new User();
 		this.listUsers = new ArrayList<User>();
 		this.endPointUser = new UserEndpoint();
+		System.out.println("Construtor");
 		this.refreshList();
 	}
 	
 	public void refreshList(){
 		this.listUsers = this.endPointUser.getUsers();
+		this.desabilitarBotoes = true;
+	}
+	
+	/**
+	 * Put ou Post User
+	 * @return evita erro na view
+	 */
+	public String createOrUpdate(){
+		for (int i = 0; i < this.listUsers.size(); i++) {
+			int id = this.listUsers.get(i).getId();
+			if (this.user.getId() == id){
+				System.out.println("PUT User");
+				return null;
+			}
+		}
+		
+		this.endPointUser.postUser(this.user);
+		
+		return null;
 	}
 	
 	public void onRowSelect(SelectEvent event) {
-        FacesMessage msg = new FacesMessage("User Selected", ((User) event.getObject()).getName());
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        this.userSelected = ((User) event.getObject());
+        this.desabilitarBotoes = false;
     }
 	
-	/*
-	 * GET /users
+	/**
+	 * Insere os valores de usuario no form
+	 * @return evitar erro na view
 	 */
-	public void getAll(){
-		this.endPointUser.getUsers();
+	public String updateForm(){
+		this.user = this.userSelected;
+		return null;
 	}
-
+	
 	// GET AND SET
 	public User getUser() {
 		return user;
@@ -76,6 +98,14 @@ public class UserController implements Serializable{
 
 	public void setUserSelected(User userSelected) {
 		this.userSelected = userSelected;
+	}
+
+	public boolean isDesabilitarBotoes() {
+		return desabilitarBotoes;
+	}
+
+	public void setDesabilitarBotoes(boolean desabilitarBotoes) {
+		this.desabilitarBotoes = desabilitarBotoes;
 	}
 
 	

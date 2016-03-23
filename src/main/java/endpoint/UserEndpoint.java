@@ -9,37 +9,30 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import model.User;
 import util.JsonParser;
 
-public class UserEndpoint implements Serializable{
+public class UserEndpoint extends AbstractRequest implements Serializable{
 
 	private static final long serialVersionUID = -8578600928021044681L;
-	
-	private List<User> listUsers;
-	
-	private User user;
-	
-	private AbstractRequest absRequest;
-	
+
 	private JsonParser jsonParser;
-	
+
 	public UserEndpoint() {
 		super();
-		this.listUsers = new ArrayList<User>();
-		this.user = new User();
-		this.absRequest = new AbstractRequest();
 		this.jsonParser = new JsonParser();
 	}
 
 
 	// GET /users
 	public List<User> getUsers() {
-		this.listUsers = new ArrayList<User>();
-		
+		List<User> listUsers = new ArrayList<User>();
+
 		try {
 
-			HttpURLConnection conn = this.absRequest.makeGetRequest();
+			HttpURLConnection conn = this.makeGetRequest();
 
 			if (conn.getResponseCode() != 200) {
 				throw new RuntimeException("Failed : HTTP error code : "
@@ -47,27 +40,61 @@ public class UserEndpoint implements Serializable{
 			}
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(
-				(conn.getInputStream())));
+					(conn.getInputStream())));
 
 			String response;
 			while ((response = br.readLine()) != null) {
-				this.listUsers = this.jsonParser.listJsonToListUsers(response);
+				listUsers = this.jsonParser.listJsonToListUsers(response);
 			}
-			
-			this.absRequest.closeHttpConnnection();
-			
 
-		  } catch (MalformedURLException e) {
+			this.closeHttpConnnection();
 
-			e.printStackTrace();
 
-		  } catch (IOException e) {
+		} catch (MalformedURLException e) {
 
 			e.printStackTrace();
 
-		  }
-		
-		return this.listUsers;
+		} catch (IOException e) {
+
+			e.printStackTrace();
+
+		}
+
+		return listUsers;
+	}
+
+	/**
+	 * Add User
+	 */
+	public void postUser(User user) {
+		try {
+
+			HttpURLConnection conn = this.makePostRequest();
+
+			if (conn.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+						+ conn.getResponseCode());
+			}
+			// TODO POST, PUT AND GET by ID 
+			JSONObject jsonObj = this.jsonParser.userToJson(user);
+			// Add jsonObj no body
+
+			byte[] postDataBytes = jsonObj.toString().getBytes("UTF-8");
+
+			conn.getOutputStream().write(postDataBytes);
+
+			this.closeHttpConnnection();
+
+
+		} catch (MalformedURLException e) {
+
+			e.printStackTrace();
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+
+		}
 	}
 
 }

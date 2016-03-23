@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-                                          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml"
         xmlns:h="http://java.sun.com/jsf/html"
@@ -7,13 +6,11 @@
         xmlns:f="http://java.sun.com/jsf/core"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-
-<h:head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>User App</title>
-</h:head>
-<h:outputStylesheet library="css" name="mystyle.css"  />
+<head>
+<link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/img/favicon.ico"/>
+</head>
 <h:body>
+<ui:include src="template/header.xhtml"></ui:include>
 <b:container>
 	<b:panel id="panelUsers" title="Painel Usuários" collapsible="false">
 	<h:panelGrid columns="2" columnClasses="rowPanelGrid1, rowPanelGrid2" style="width:100%;">
@@ -66,20 +63,27 @@
 			<!-- BUTTONS -->
 			<b:row>
 			<b:column medium-screen="4" span="2" offset="8">
-		    	<b:commandButton value="Cadastrar" look="primary" action="#" />
+		    	<b:commandButton value="Cadastrar" id="cadastrar" look="primary" 
+		    		action="#{userController.createOrUpdate}" ajax="true" />
 			</b:column>
 			</b:row>
 			
 		 </b:panel>
 		 
 	</h:form>
-	
+	<h:form id="formDatatable">
+		<b:commandButton value="Editar" id = "edit" action="#{userController.updateForm}"
+			disabled="#{userController.desabilitarBotoes}" update="newUserForm" ajax="true" />
+		
+		<b:commandButton value="Remover" id = "remove" action="#{userController.updateForm}"
+			disabled="#{userController.desabilitarBotoes}" look="danger" ajax="true" />
+		
 		<p:dataTable id="userDatatable" var="user" value="#{userController.listUsers}" selectionMode="single"
 			 selection="#{userController.userSelected}" rowKey="#{user.id}" reflow="true"
 			 rowStyleClass="#{user.gender eq 'M' ? 'male' : 'female'}"
 			 rows="10" paginator="true">
 			
-			<p:ajax event="rowSelect" listener="#{userController.onRowSelect}" />
+			<p:ajax event="rowSelect" listener="#{userController.onRowSelect}" update="formDatatable:edit" />
 		   	
 		   	<f:facet name="header">
 		   		Usuários
@@ -103,8 +107,9 @@
 		        <h:outputText value="#{user.gender}" />
 		    </p:column>
 		</p:dataTable>
-	</h:panelGrid>
+	</h:form>
 
+	</h:panelGrid>
 	</b:panel>
 </b:container>
 </h:body>

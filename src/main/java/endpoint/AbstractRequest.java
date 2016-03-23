@@ -38,6 +38,20 @@ public class AbstractRequest implements Serializable{
 		
 	}
 	
+	public HttpURLConnection makePostRequest() {
+		try {
+			this.conn.setRequestMethod("POST");
+			this.conn.setDoOutput( true );
+			this.conn.setInstanceFollowRedirects( false );
+			this.conn.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded"); 
+			this.conn.setRequestProperty( "charset", "utf-8");
+		} catch (ProtocolException e) {
+			e.printStackTrace();
+		}
+		return this.conn;
+		
+	}
+	
 	//TODO get with params, post and put
 	
 	public void closeHttpConnnection(){
